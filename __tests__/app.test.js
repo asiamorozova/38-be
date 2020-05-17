@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongod = new MongoMemoryServer();
 const mongoose = require('mongoose');
@@ -20,4 +22,29 @@ describe('38-be routes', () => {
     await mongoose.connection.close();
     return mongod.stop();
   });
+
+  it('creates a castle', () => {
+    return request(app)
+      .post('/api/v1/castles')
+      .send({
+        name: 'castle name',
+        year: 1969,
+        image: 'URL',
+        description: 'spooky castle'
+      })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'castle name',
+          year: 1969,
+          image: 'URL',
+          description: 'spooky castle',
+          __v: 0
+        });
+      });
+  });
+
 });
+
+
+
